@@ -73,6 +73,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\..\..\..\Downloads\vision-timer-master\vision-timer-master\Timer\Timer\basetimer.h" />
     <ClInclude Include="Algorithm.h" />
     <ClInclude Include="DefaultExtraction.h" />
     <ClInclude Include="DefaultLocalization.h" />
@@ -105,6 +106,7 @@
     <ClInclude Include="StudentPreProcessing.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\..\..\..\Downloads\vision-timer-master\vision-timer-master\Timer\Timer\basetimer.cpp" />
     <ClCompile Include="DefaultExtraction.cpp" />
     <ClCompile Include="DefaultLocalization.cpp" />
     <ClCompile Include="DefaultPreProcessing.cpp" />
