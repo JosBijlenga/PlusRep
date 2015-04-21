@@ -2,7 +2,8 @@
 *.pdf
 *.exe
 *.user
-
+*.suo
+*~*
 
 
 ExternalDLL/ExternalDLL/OpenCV/staticlib_x86_vc12/OpenCVConfig.cmake
