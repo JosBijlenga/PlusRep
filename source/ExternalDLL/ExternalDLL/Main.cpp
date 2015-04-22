@@ -15,9 +15,9 @@ bool executeSteps(DLLExecution * executor);
 
 int main(int argc, char * argv[]) {
 
-	ImageFactory::setImplementation(ImageFactory::DEFAULT);
-	//ImageFactory::setImplementation(ImageFactory::STUDENT);
-
+	//ImageFactory::setImplementation(ImageFactory::DEFAULT);
+	ImageFactory::setImplementation(ImageFactory::STUDENT);
+	//the Jos fix
 
 	ImageIO::debugFolder = "D:\\Users\\Rolf\\Downloads\\FaceMinMin";
 	ImageIO::isInDebugMode = true; //If set to false the ImageIO class will skip any image save function calls
