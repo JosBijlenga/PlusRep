@@ -114,7 +114,7 @@
     <ClInclude Include="SonnetXVIII.h">
       <Filter>Header Files\private\disableautocomplete</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\..\Downloads\vision-timer-master\vision-timer-master\Timer\Timer\basetimer.h">
+    <ClInclude Include="basetimer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -194,7 +194,7 @@
     <ClCompile Include="SonnetXVIII.cpp">
       <Filter>Source Files\private\disableautocomplete</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\..\Downloads\vision-timer-master\vision-timer-master\Timer\Timer\basetimer.cpp">
+    <ClCompile Include="basetimer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
