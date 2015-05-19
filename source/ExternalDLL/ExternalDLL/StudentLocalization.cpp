@@ -1,46 +1,52 @@
+#include <iostream>
 #include "StudentLocalization.h"
+
+
+template<typename T>
+std::ostream& operator<< (std::ostream& os, const std::vector<T>& vec) {
+	for (auto& el : vec) {
+		os << el << '\n';
+	}
+	return os;
+}
+
+std::vector<int> smoothfilter(const std::vector<int> &histogram){
+	std::vector<int> rtn;
+	rtn.push_back(histogram.at(0));
+	rtn.push_back(histogram.at(1));
+	for (int i = 2; i < histogram.size() - 2; i++){
+		rtn.push_back((histogram.at(i-2) + histogram.at(i - 1) + histogram.at(i) + histogram.at(i + 1) + histogram.at(i+2)) / 5);
+	}
+	rtn.push_back(histogram.at(histogram.size()-2));
+	rtn.push_back(histogram.at(histogram.size()-1));
+	return rtn;
+}
+
 
 bool StudentLocalization::stepFindHead(const IntensityImage &image, FeatureMap &features) const {
 	int width = image.getWidth(), heigth = image.getHeight();
-
-	bool stop = false;
-	//horizontale lijnen
-	for (int y = 0; y < heigth && !stop; y++){
-		int tmpXArray[2] = { 0 }; //element 0 = black element 1 = white
-		for (int x = 0; x < width && !stop; x++){
-			tmpXArray[image.getPixel(x, y) == 0 ? 0 : 1]++; //checks if pixel is black or white and then adds 1 accordingly;
-		}
-		if (tmpXArray[0]>10){
-			stop = true;
-			features.putFeature(Feature{ Feature::FEATURE_HEAD_TOP, Point2D < double > {0, static_cast<double>(y)} });
-		}
-	}
-
-	//verticale links naar rechts
-	stop = false;
+	std::vector<int> xHistogram, yHistogram;
 	for (int x = 0; x < width; x++){
-		int tmpYArray[2] = { 0 }; //element 0 = black element 1 = white
-		for (int y = 0; y < heigth && !stop; y++){
-			tmpYArray[image.getPixel(x, y) == 0 ? 0 : 1]++; //checks if pixel is black or white and then adds 1 accordingly;
-		}
-		if (tmpYArray[0]>20){
-			stop = true;
-			features.putFeature(Feature{ Feature::FEATURE_HEAD_LEFT_SIDE, Point2D < double > {static_cast<double>(x), 0} });
+		xHistogram.push_back(0);
+		for (int y = 0; y < heigth; y++){
+			if (image.getPixel(x, y) == 0){
+				xHistogram.at(x)++;
+			}
 		}
 	}
 
-	//verticale rechts naar links
-	stop = false;
-	for (int x = width -1; x >= 0; x--){
-		int tmpYArray[2] = { 0 }; //element 0 = black element 1 = white
-		for (int y = 0; y < heigth && !stop; y++){
-			tmpYArray[image.getPixel(x, y) == 0 ? 0 : 1]++; //checks if pixel is black or white and then adds 1 accordingly;
-		}
-		if (tmpYArray[0]>20){
-			stop = true;
-			features.putFeature(Feature{ Feature::FEATURE_HEAD_RIGHT_SIDE, Point2D < double > {static_cast<double>(x), 0} });
+	for (int y = 0; y < heigth; y++){
+		yHistogram.push_back(0);
+		for (int x = 0; x < width; x++){
+			if (image.getPixel(x, y) == 0){
+				yHistogram.at(y)++;
+			}
 		}
 	}
+	xHistogram = smoothfilter(xHistogram);
+	yHistogram = smoothfilter(yHistogram);
+	std::cout << "xHistogram" << xHistogram << std::endl;
+	std::cout << "yHistogram" << yHistogram << std::endl;
 	return true;
 }
 
