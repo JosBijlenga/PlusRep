@@ -1,5 +1,6 @@
 #include <iostream>
 #include <math.h>
+#include <string>
 #include "StudentLocalization.h"
 
 
@@ -71,19 +72,22 @@ bool StudentLocalization::stepFindHead(const IntensityImage &image, FeatureMap &
 		}
 	}
 	xHistogram = abs(smoothfilter(derivative(smoothfilter(xHistogram))));
-	yHistogram = abs(smoothfilter(derivative(smoothfilter(yHistogram))));
+	yHistogram = smoothfilter(derivative(smoothfilter(yHistogram)));
 	int xLeft = 0, yLeft = 0,xMid = 0, yMid = 0, xRight = 0, yRight = 0;
-	float xHistogramAverage = 5*getAverageVector(xHistogram), yHistogramAverage = 5*getAverageVector(yHistogram);
+	float xHistogramAverage = getAverageVector(xHistogram), yHistogramAverage = getAverageVector(yHistogram);
+	float xHistogramTreshold = 5 * xHistogramAverage, yHistogramTreshold = 5 * yHistogramAverage;
 	//Eerste linker piek zoeken
 	for (int x = 0; x < xHistogram.size(); x++){
-		if (xHistogram.at(x) > xHistogramAverage){
+		if (xHistogram.at(x) > xHistogramTreshold){
 			xLeft = x;
 			break;
 		}
 	}
+
+
 	//Eerste rechter piek zoeken
 	for (int x = xHistogram.size() - 1; x >= 0; x--){
-		if (xHistogram.at(x) > xHistogramAverage){
+		if (xHistogram.at(x) > xHistogramTreshold){
 			xRight = x;
 			break;
 		}
@@ -91,15 +95,45 @@ bool StudentLocalization::stepFindHead(const IntensityImage &image, FeatureMap &
 	//Midden v h hoofd
 	xMid = (xRight + xLeft)/2;
 	//Hoogte van hoofd
-	for (int y = 0; y < xHistogram.size() - 1; y++){
+	for (int y = 0; y < yHistogram.size() - 1; y++){
 		if (yHistogram.at(y) > yHistogramAverage){
-			yMid = y;
+			yMid = y+3;
+			break;
+		}
+	}
+
+	//find height of mid of head
+	int biggest_dip = 0 , biggest_dip_y = 0;
+	for (int y = 0; y < yHistogram.size() - 1; y++){
+		if (yHistogram.at(y) < biggest_dip){
+			biggest_dip = yHistogram.at(y);
+			biggest_dip_y = y;
+		}
+	}
+	for (int y = biggest_dip_y; y < yHistogram.size(); y++){
+		if (yHistogram.at(y) > 0){
+			biggest_dip_y = y;
+			break;
+		}
+	}
+	for (int y = biggest_dip_y + 1; y < yHistogram.size(); y++){
+		if (yHistogram.at(y) < 0){
+			yLeft = yRight = y;
 			break;
 		}
 	}
 	std::cout << "x average: " << xHistogramAverage << '\n';
 	std::cout << "x left: " << xLeft << "  x mid: " << xMid << "  x right: " << xRight << '\n';
 	std::cout << "y left: " << yLeft << "  y mid: " << yMid << "  y right: " << yRight << '\n';
+	Feature headTop = Feature(Feature::FEATURE_HEAD_TOP, Point2D<double>(xMid,yMid));
+	features.putFeature(headTop);
+
+	Feature headLeftSide = Feature(Feature::FEATURE_HEAD_LEFT_SIDE, Point2D<double>(xLeft,yLeft));
+	features.putFeature(headLeftSide);
+
+	Feature headRightSide = Feature(Feature::FEATURE_HEAD_RIGHT_SIDE, Point2D<double>(xRight,yRight));
+	features.putFeature(headRightSide);
+
 	return true;
 }
 
