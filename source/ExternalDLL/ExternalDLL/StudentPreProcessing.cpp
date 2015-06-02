@@ -2,9 +2,9 @@
 #include "ImageFactory.h"
 #include <math.h>
 
-#define NN_OR_BIPOLAIR 0
+#define BILINIEAR false
 
-IntensityImage * nearestNeighbour(const IntensityImage &image){
+IntensityImage * StuddentPreProcessing::nearestNeighbour(const IntensityImage &image) const {
 	const int newX = image.getWidth()*0.5, newY = newX / ((float)image.getWidth() / (float)image.getHeight());
 	IntensityImage * newImage = ImageFactory::newIntensityImage(newX, newY);
 	float x_ratio = (float)image.getWidth() / newX;
@@ -30,11 +30,20 @@ IntensityImage * StudentPreProcessing::stepToIntensityImage(const RGBImage &imag
 }
 
 IntensityImage * StudentPreProcessing::stepScaleImage(const IntensityImage &image) const {
-	#if NN_OR_BIPOLAIR 0
-		return nearestNeighbour(image);
+	#if BILINIEAR
+		return stepScaleImageBilinear(image);
 	#else
-		return JOS_ZIJN_FUNCTIE;
+		return nearestNeighbour(image);
 	#endif
+}
+
+IntensityImage * StudentPreProcessing::stepScaleImageBilinear(const IntensityImage &image) const{
+	const int newX = 200, newY = newX / ((float)image.getWidth() / (float)image.getHeight());
+	IntensityImage * newImg = ImageFactory::newIntensityImage(newX, newY);
+
+
+
+	return newImg;
 }
 
 IntensityImage * StudentPreProcessing::stepEdgeDetection(const IntensityImage &image) const {
@@ -68,7 +77,7 @@ IntensityImage * StudentPreProcessing::stepEdgeDetection(const IntensityImage &i
 				sum[6] = image.getPixel(x - 1, y - 1) *  2.0f;
 				sum[7] = image.getPixel(x, y - 1) *  3.0f;
 				sum[8] = image.getPixel(x + 1, y - 1) *  2.0f;
-				sum[9] = image.getPixel(x + 2, y - 1) * -1.0;
+				sum[9] = image.getPixel(x + 2, y - 1) * -1.0f;
 
 				// row three
 				sum[10] = image.getPixel(x - 2, y) *  0.0f;
