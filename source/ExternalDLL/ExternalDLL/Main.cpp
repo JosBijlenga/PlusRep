@@ -9,6 +9,7 @@
 #include "HereBeDragons.h"
 #include "ImageFactory.h"
 #include "DLLExecution.h"
+#include "basetimer.h"
 
 void drawFeatureDebugImage(IntensityImage &image, FeatureMap &features);
 bool executeSteps(DLLExecution * executor);
@@ -25,7 +26,7 @@ int main(int argc, char * argv[]) {
 
 
 	RGBImage * input = ImageFactory::newRGBImage();
-	if (!ImageIO::loadImage("..\\..\\..\\testsets\\Set A\\TestSet Images\\child-1.png", *input)) {
+	if (!ImageIO::loadImage("..\\..\\..\\testsets\\Set A\\TestSet Images\\male-1.png", *input)) {
 		std::cout << "Image could not be loaded!" << std::endl;
 		system("pause");
 		return 0;
@@ -34,19 +35,21 @@ int main(int argc, char * argv[]) {
 
 	ImageIO::saveRGBImage(*input, ImageIO::getDebugFileName("debug.png"));
 
-	DLLExecution * executor = new DLLExecution(input);
+	for (int i = 0; i < 10; i++){
+		DLLExecution * executor = new DLLExecution(input);
 
 
-	if (executeSteps(executor)) {
-		std::cout << "Face recognition successful!" << std::endl;
-		std::cout << "Facial parameters: " << std::endl;
-		for (int i = 0; i < 16; i++) {
-			std::cout << (i + 1) << ": " << executor->facialParameters[i] << std::endl;
+		if (executeSteps(executor)) {
+			std::cout << "Face recognition successful!" << std::endl;
+			std::cout << "Facial parameters: " << std::endl;
+			for (int i = 0; i < 16; i++) {
+				std::cout << (i + 1) << ": " << executor->facialParameters[i] << std::endl;
+			}
 		}
-	}
 
-	delete executor;
-	system("pause");
+		delete executor;
+		system("pause");
+	}
 	return 1;
 }
 
@@ -64,13 +67,21 @@ bool executeSteps(DLLExecution * executor) {
 	}
 	ImageIO::saveIntensityImage(*executor->resultPreProcessingStep2, ImageIO::getDebugFileName("Pre-processing-2.png"));
 
-	if (!executor->executePreProcessingStep3(true)) {
-		std::cout << "Pre-processing step 3 failed!" << std::endl;
-		return false;
+	
+	BaseTimer * bt = new BaseTimer();
+	bt->start();
+	for (int i = 0; i < 10; i++){
+		if (!executor->executePreProcessingStep3(false)) {
+			std::cout << "Pre-processing step 3 failed!" << std::endl;
+			return false;
+		}
 	}
+	bt->stop();
+	std::cout << "time: " << bt->elapsedMilliSeconds() << "milliSeconds\n";
+
 	ImageIO::saveIntensityImage(*executor->resultPreProcessingStep3, ImageIO::getDebugFileName("Pre-processing-3.png"));
 
-	if (!executor->executePreProcessingStep4(true)) {
+	if (!executor->executePreProcessingStep4(false)) {
 		std::cout << "Pre-processing step 4 failed!" << std::endl;
 		return false;
 	}

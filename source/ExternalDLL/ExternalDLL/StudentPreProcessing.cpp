@@ -19,21 +19,6 @@ IntensityImage * StudentPreProcessing::stepEdgeDetection(const IntensityImage &i
 	int width = image.getWidth(), height = image.getHeight();
 	IntensityImage * newImg = ImageFactory::newIntensityImage(width, height);
 
-	int mask[25] = {
-		 -4, -1, 0, -1, -4, 
-		 -1, 2, 3, 2, -1, 
-		 0, 3, 4, 3, 0, 
-		 -1, 2, 3, 2, -1, 
-		 -4, -1, 0, -1, -4 
-	};
-	/*int offset[25] = {
-		 -2, -1, 0, 1, 2 
-		 -2, -1, 0, 1, 2 
-		 -2, -1, 0, 1, 2 
-		 -2, -1, 0, 1, 2 
-		 -2, -1, 0, 1, 2 
-	};*/
-
 	// loop over the old intensityImage
 	for (int x = 0; x < width; x++){
 		for (int y = 0; y < height; y++){
@@ -47,18 +32,7 @@ IntensityImage * StudentPreProcessing::stepEdgeDetection(const IntensityImage &i
 			}
 			else{
 				// apply mask on current value and calculate new values
-
 				float sum[25];
-				/*
-				for (int xx = 0; xx < 5; xx++){
-					sum[xx] = image.getPixel(x - 2, y - 2 - xx) * mask[xx % 5];
-					sum[xx] = image.getPixel(x - 1, y - 2 - xx) * mask[xx % 5];
-					sum[xx] = image.getPixel(x    , y - 2 - xx) * mask[xx % 5];
-					sum[xx] = image.getPixel(x + 1, y - 2 - xx) * mask[xx % 5];
-					sum[xx] = image.getPixel(x + 2, y - 2 - xx) * mask[xx % 5];
-				}*/
-
-				//sum[i] = image.getPixel(x - 2 - i, y - 2) * -4 * i;
 				
 				// row one
 				sum[0] = image.getPixel(x - 2, y - 2) * -4.0f;
@@ -95,13 +69,11 @@ IntensityImage * StudentPreProcessing::stepEdgeDetection(const IntensityImage &i
 				sum[23] = image.getPixel(x + 1, y - 2) * -1.0f;
 				sum[24] = image.getPixel(x + 2, y - 2) * -4.0f;
 				
-
 				float avg = 0;
 				for (int i = 0; i < 25; i++){
 					avg += sum[i];
 				}
-				//avg /= 25;
-				avg /= 8;
+				avg /= 9;
 
 				newImg->setPixel(x, y, (int)avg);
 			}
