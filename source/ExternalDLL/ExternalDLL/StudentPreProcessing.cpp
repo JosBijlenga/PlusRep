@@ -1,5 +1,24 @@
 #include "StudentPreProcessing.h"
 #include "ImageFactory.h"
+#include <math.h>
+
+#define NN_OR_BIPOLAIR 0
+
+IntensityImage * nearestNeighbour(const IntensityImage &image){
+	const int newX = image.getWidth()*0.5, newY = newX / ((float)image.getWidth() / (float)image.getHeight());
+	IntensityImage * newImage = ImageFactory::newIntensityImage(newX, newY);
+	float x_ratio = (float)image.getWidth() / newX;
+	float y_ratio = (float)image.getHeight() / newY;
+	int x2, y2;
+	for (int x = 0; x<newX; x++) {
+		for (int y = 0; y<newY; y++) {
+			x2 = floor(x*x_ratio);
+			y2 = floor(y*y_ratio);
+			newImage->setPixel(x, y, image.getPixel(x2, y2));
+		}
+	}
+	return newImage;
+}
 
 IntensityImage * StudentPreProcessing::stepToIntensityImage(const RGBImage &image) const {
 	IntensityImage * grayImage = ImageFactory::newIntensityImage(image.getWidth(), image.getHeight());
@@ -11,8 +30,11 @@ IntensityImage * StudentPreProcessing::stepToIntensityImage(const RGBImage &imag
 }
 
 IntensityImage * StudentPreProcessing::stepScaleImage(const IntensityImage &image) const {
-
-	return nullptr;
+	#if NN_OR_BIPOLAIR 0
+		return nearestNeighbour(image);
+	#else
+		return JOS_ZIJN_FUNCTIE;
+	#endif
 }
 
 IntensityImage * StudentPreProcessing::stepEdgeDetection(const IntensityImage &image) const {

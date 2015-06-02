@@ -122,10 +122,11 @@ bool StudentLocalization::stepFindHead(const IntensityImage &image, FeatureMap &
 			break;
 		}
 	}
+	#ifdef _DEBUG
 		std::cout << "x average: " << xHistogramAverage << '\n';
 		std::cout << "x left: " << xLeft << "  x mid: " << xMid << "  x right: " << xRight << '\n';
 		std::cout << "y left: " << yLeft << "  y mid: " << yMid << "  y right: " << yRight << '\n';
-
+	#endif
 	Feature headTop = Feature(Feature::FEATURE_HEAD_TOP, Point2D<double>(xMid,yMid));
 	features.putFeature(headTop);
 
