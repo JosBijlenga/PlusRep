@@ -75,7 +75,7 @@ bool StudentLocalization::stepFindHead(const IntensityImage &image, FeatureMap &
 	yHistogram = smoothfilter(derivative(smoothfilter(yHistogram)));
 	int xLeft = 0, yLeft = 0,xMid = 0, yMid = 0, xRight = 0, yRight = 0;
 	float xHistogramAverage = getAverageVector(xHistogram), yHistogramAverage = getAverageVector(yHistogram);
-	float xHistogramTreshold = 5 * xHistogramAverage, yHistogramTreshold = 5 * yHistogramAverage;
+	float xHistogramTreshold = 4 * xHistogramAverage, yHistogramTreshold = 4 * yHistogramAverage;
 	//Eerste linker piek zoeken
 	for (int x = 0; x < xHistogram.size(); x++){
 		if (xHistogram.at(x) > xHistogramTreshold){
@@ -122,11 +122,10 @@ bool StudentLocalization::stepFindHead(const IntensityImage &image, FeatureMap &
 			break;
 		}
 	}
-	#ifdef _DEBUG
 		std::cout << "x average: " << xHistogramAverage << '\n';
 		std::cout << "x left: " << xLeft << "  x mid: " << xMid << "  x right: " << xRight << '\n';
 		std::cout << "y left: " << yLeft << "  y mid: " << yMid << "  y right: " << yRight << '\n';
-	#endif
+
 	Feature headTop = Feature(Feature::FEATURE_HEAD_TOP, Point2D<double>(xMid,yMid));
 	features.putFeature(headTop);
 
