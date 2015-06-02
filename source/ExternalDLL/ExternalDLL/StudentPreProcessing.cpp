@@ -1,24 +1,9 @@
 #include "StudentPreProcessing.h"
 #include "ImageFactory.h"
 #include <math.h>
+#include <iostream>
 
-#define BILINIEAR 0
-
-IntensityImage * StudentPreProcessing::nearestNeighbour(const IntensityImage &image) const {
-	const int newX = image.getWidth()*3, newY = newX / ((float)image.getWidth() / (float)image.getHeight());
-	IntensityImage * newImage = ImageFactory::newIntensityImage(newX, newY);
-	float x_ratio = (float)image.getWidth() / newX;
-	float y_ratio = (float)image.getHeight() / newY;
-	int x2, y2;
-	for (int x = 0; x<newX; x++) {
-		for (int y = 0; y<newY; y++) {
-			x2 = floor(x*x_ratio);
-			y2 = floor(y*y_ratio);
-			newImage->setPixel(x, y, image.getPixel(x2, y2));
-		}
-	}
-	return newImage;
-}
+#define BILINIEAR 1
 
 IntensityImage * StudentPreProcessing::stepToIntensityImage(const RGBImage &image) const {
 	IntensityImage * grayImage = ImageFactory::newIntensityImage(image.getWidth(), image.getHeight());
@@ -37,11 +22,46 @@ IntensityImage * StudentPreProcessing::stepScaleImage(const IntensityImage &imag
 	#endif
 }
 
+IntensityImage * StudentPreProcessing::nearestNeighbour(const IntensityImage &image) const {
+	const int newX = image.getWidth() * 3, newY = newX / ((float)image.getWidth() / (float)image.getHeight());
+	IntensityImage * newImage = ImageFactory::newIntensityImage(newX, newY);
+	float x_ratio = (float)image.getWidth() / newX;
+	float y_ratio = (float)image.getHeight() / newY;
+	int x2, y2;
+	for (int x = 0; x<newX; x++) {
+		for (int y = 0; y<newY; y++) {
+			x2 = floor(x*x_ratio);
+			y2 = floor(y*y_ratio);
+			newImage->setPixel(x, y, image.getPixel(x2, y2));
+		}
+	}
+	return newImage;
+}
+
 IntensityImage * StudentPreProcessing::stepScaleImageBilinear(const IntensityImage &image) const{
-	const int newX = 200, newY = newX / ((float)image.getWidth() / (float)image.getHeight());
+	const float factor = 2.0f;
+	const int newX = image.getWidth() * factor, newY = newX / ((float)image.getWidth() / (float)image.getHeight()); // keep ratio
 	IntensityImage * newImg = ImageFactory::newIntensityImage(newX, newY);
 
+	float x_ratio = (float)image.getWidth() / newX;
+	float y_ratio = (float)image.getHeight() / newX;
 
+	for (int x = 0; x < newX; x++){
+		for (int y = 0; y < newY; y++){
+			int calc;
+			float p1 = image.getPixel(x*x_ratio, y*y_ratio);		// top left
+			float p2 = image.getPixel(x*x_ratio + 1, y*y_ratio);	// top right
+			float p3 = image.getPixel(x*x_ratio, y*y_ratio + 1);	// bottom left
+			float p4 = image.getPixel(x*x_ratio + 1, y*y_ratio + 1);// bottom right
+
+			float horTop = p1 + p2 / 2;
+			float horBottom = p3 + p4 / 2;
+
+			calc = (int)(horTop + horBottom) / 2;
+			
+			newImg->setPixel(x, y, calc);
+		}
+	}
 
 	return newImg;
 }
