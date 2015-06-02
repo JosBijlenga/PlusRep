@@ -11,8 +11,30 @@ IntensityImage * StudentPreProcessing::stepToIntensityImage(const RGBImage &imag
 }
 
 IntensityImage * StudentPreProcessing::stepScaleImage(const IntensityImage &image) const {
+	bool bilinearScaleMethod = true;
+
+	IntensityImage * newImg;
+
+	if (bilinearScaleMethod){
+		// mijn uber epische bilinear scalingsmethode
+		newImg = stepScaleImageBilinear(image);
+	}
+	else{
+		// die ene methode van Robert die Nearest-Neighbor gebruikt
+		//newImg = stepScaleImageNearestNeighbor(image);
+		newImg = stepScaleImageBilinear(image); // anders krijg je errors enzo, verwijder deze JWZ :P
+	}
 
 	return nullptr;
+}
+
+IntensityImage * StudentPreProcessing::stepScaleImageBilinear(const IntensityImage &image) const{
+	const int newX = 200, newY = newX / ((float)image.getWidth() / (float)image.getHeight());
+	IntensityImage * newImg = ImageFactory::newIntensityImage(newX, newY);
+
+
+
+	return newImg;
 }
 
 IntensityImage * StudentPreProcessing::stepEdgeDetection(const IntensityImage &image) const {
@@ -46,7 +68,7 @@ IntensityImage * StudentPreProcessing::stepEdgeDetection(const IntensityImage &i
 				sum[6] = image.getPixel(x - 1, y - 1) *  2.0f;
 				sum[7] = image.getPixel(x, y - 1) *  3.0f;
 				sum[8] = image.getPixel(x + 1, y - 1) *  2.0f;
-				sum[9] = image.getPixel(x + 2, y - 1) * -1.0;
+				sum[9] = image.getPixel(x + 2, y - 1) * -1.0f;
 
 				// row three
 				sum[10] = image.getPixel(x - 2, y) *  0.0f;
