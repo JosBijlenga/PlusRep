@@ -5,7 +5,7 @@
 #define BILINIEAR 0
 
 IntensityImage * StudentPreProcessing::nearestNeighbour(const IntensityImage &image) const {
-	const int newX = image.getWidth()*0.5, newY = newX / ((float)image.getWidth() / (float)image.getHeight());
+	const int newX = image.getWidth()*3, newY = newX / ((float)image.getWidth() / (float)image.getHeight());
 	IntensityImage * newImage = ImageFactory::newIntensityImage(newX, newY);
 	float x_ratio = (float)image.getWidth() / newX;
 	float y_ratio = (float)image.getHeight() / newY;
